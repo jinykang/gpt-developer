@@ -1,0 +1,59 @@
+
+
+STEP1) VSCODE 확장툴 검색 
+AICodeHelper 설치 
+-GPT3.5 TURBO를 기반으로 작동함
+
+
+관련가이드 : 
+https://www.youtube.com/watch?v=SQPLPPb_LuE
+
+
+STEP2) ChatGPT API 키를 발급받는다.
+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
+
+
+
+STEP3)VSCode 설정>검색 aicodehelper 검색후 
+검색 목록에서 하단으로 이동 
+Aicodehelper:GptKey : 발급키 입력 
+ 
+Aicodehelper:Language : korean 입력
+
+
+
+
+STEP4)주요 Aicodehelper 단축키 
+https://dalsim777-tech.tistory.com/47
+https://tes-b.github.io/vscode/vscode_with_gpt/
+
+-코드생성 요청하기 
+프롬프트입력 > 프롬프트 선택 상태에서 > 하기 단축키 실행
+Ctrl + Shift + Alt + G
+
+
+-질문하기
+질문프롬프트입력> 프롬프트 선택상태에서 >하기 단축키 실행
+Ctrl + Alt + Shift + M
+
+-기타
+코드 리뷰 Ctrl + Alt + Shift + C
+코드 리펙토링 Ctrl + Alt + Shift + R
+코드 주석달기 Ctrl + Alt + Shift + Z
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
