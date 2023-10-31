@@ -8,6 +8,9 @@ var app = require('../app');
 var debug = require('debug')('gpt-developer:server');
 var http = require('http');
 
+//웹소켓 모듈을 참조한다.
+var socket = require("../socket.js");
+
 /**
  * Get port from environment and store in Express.
  */
@@ -26,6 +29,10 @@ var server = http.createServer(app);
  */
 
 server.listen(port);
+
+//node express application에 socket.js 웹소켓모듈을 연결시킨다.
+socket(server);
+
 server.on('error', onError);
 server.on('listening', onListening);
 

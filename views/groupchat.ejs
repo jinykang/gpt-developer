@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+
+<html>
+    <head>
+        <title>채팅방 기준 채팅하기</title>
+    </head>
+
+    <body>
+        <h1>채팅방 기준 채팅하기</h1>
+        채팅방이름: <input type="text" id="channelId" value="channel1" />
+        <button id="btnEntry">입장하기</button> <br/>
+        <button id="btnExit">채팅방 퇴장하기</button> <br/>
+
+        대화명:<input type="text" id="nickName" value="창훈"/><br>
+        메시지:<input type="text" id="message" /><br/>
+        <input type="button" id="btnSend" value="전송"/>
+
+        <hr>
+        <input type="button" id="btnClose" value="채팅종료"/>
+
+        <!-- 채팅이력보기 -->
+        <ul id="chatHistory">
+        </ul>
+
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.0/jquery.min.js"></script>
+
+        <!-- 서버로부터 제공되는 socket.io 클라이언트 통신 라이브러리 파일 참조하기 -->
+        <script src="/socket.io/socket.io.js"></script>
+
+        <script>
+
+            //서버소켓과 클라이언트(웹브라우저탭)을 연결한다.
+            var socket = io.connect("http://localhost:3000/");
+
+            //채팅방 입장하기 처리 
+            $("#btnEntry").click(function(){
+
+                //채팅방아이디 추출하기 
+                var channelId = $("#channelId").val();
+                var nickName = $("#nickName").val();
+
+                //서버소켓socket.js내 entry이벤트 수신기를 호출합니다.
+                socket.emit("entry",channelId,nickName);
+            });
+
+
+            //채팅방 퇴장하기-서버와의 연결은 유지된상태로 남음/채팅방만 나옴
+            $("#btnExit").click(function(){
+
+                //채팅방아이디 추출하기 
+                var channelId = $("#channelId").val();
+                var nickName = $("#nickName").val();
+
+                //서버소켓socket.js내 exit이벤트 수신기를 호출합니다.
+                socket.emit("exit",channelId,nickName);
+            });
+
+
+            //채팅서버 연결 종료(끊기)하기 
+            $("#btnClose").click(function(){
+                socket.emit("goodbye");
+            });
+            
+
+
+            //채팅방 입장완료 메시지 클라이언트 이벤트 수신기 기능정의 
+            socket.on("entryOk",function(msgData){
+                $("#chatHistory").append(`<li>${msgData}</li>`);
+            });
+
+            //채팅방 퇴장 메시지 처리 수신기
+            socket.on("leaveOk",function(msgData){
+                $("#chatHistory").append(`<li>${msgData}</li>`);
+            });
+
+
+
+            //채팅방 사용자들에게 메시지 전송하기 
+            $("#btnSend").click(function(){
+
+                var channelId = $("#channelId").val();
+                var nickName = $("#nickName").val();
+                var message = $("#message").val();
+
+                var jsonMsgData = {
+                    "channelId":channelId,
+                    "nickName":nickName,
+                    "message":message
+                };
+
+                //서버 그룹채팅 메시지 이벤트 수신기 호출하기
+                socket.emit("send",jsonMsgData);
+            });
+
+
+            //그룹채팅 클라이언트 메시지 수신기 기능정의하기 
+            socket.on("receiveGroupMsg",function(data){
+                $("#chatHistory").append(`<li>${data.nickName}:${data.message}</li>`);
+            });
+
+
+            //서버소켓에 연결된 모든 사용자들이 메시지를 수신하는 이벤트 수신기
+            socket.on("clientEvent2",function(msg1,msg2){
+                $("#chatHistory").append(`<li>${msg1}:${msg2}</li>`);
+            });
+
+
+
+
+        </script>
+
+
+    </body>
+</html>

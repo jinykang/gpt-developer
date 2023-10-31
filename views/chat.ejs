@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <title>모든사용자 채팅하기</title>
+  </head>
+
+  <body>
+    <h1>연결된 모든 사용자간 채팅하기</h1>
+
+    대화명:<input type="text" id="nickName" value="창훈" /><br />
+    메시지:<input type="text" id="message" /><br />
+    <input type="button" id="btnSend" value="전송" />
+
+    <!-- 채팅이력보기 -->
+    <ul id="chatHistory"></ul>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.0/jquery.min.js"></script>
+
+    <!-- 서버로부터 제공되는 socket.io 클라이언트 통신 라이브러리 파일 참조하기 -->
+    <script src="/socket.io/socket.io.js"></script>
+
+    <script>
+      //io객체는 socket.io.js파일 내에서 제공해주는 서버소켓과 연결가능한 클라이언트 객체임.
+      //io.connect('서버소켓서버의 주소')를 호출하면 서버소켓서버와 연결을 시도하고 연결이 완료된다.
+      var socket = io.connect("/");
+      console.log("서버소켓과 연결이 완료되었습니다.");
+
+      $("#btnSend").click(function () {
+        var nickName = $("#nickName").val();
+        var message = $("#message").val();
+        var msgData = `${nickName}:${message}`; //"eddy:안녕하세요."
+
+        //클라이언트 디버깅하기 사용법1
+        //debugger;
+
+        //서버 소켓 socket.js내 특정 서버 이벤트 수신기로 데이터를 보낸다.
+        //socket.emit('서버socket.js에 정의되어있는 서버소켓이벤트수신기명',전달할 데이터);
+
+        socket.emit("broadcast", message);
+
+        //socket.emit("test1",nickName,message);
+
+        // var jsonMsgData ={
+        //     "nickName":nickName,
+        //     "msg":message
+        // };
+
+        // socket.emit("test2",jsonMsgData);
+
+        // console.log("서버소켓의 broadcast 이벤트를 호출했습니다.",msgData);
+      });
+
+      //서버에서 호출하는 클라이언트 메시지 이벤트 수신기 정의1
+      socket.on("receiveAll", function (msgResult) {
+        console.log("서버에서 receiveAll이벤트가 호출되었습니다.", msgResult);
+
+        $("#chatHistory").append(`<li>${msgResult}</li>`);
+      });
+
+      //클라이언트 이벤트 수신기2 예시
+      socket.on("clientEvent1", function (msg1, msg2) {
+        $("#chatHistory").append(`<li>${msg1}:${msg2}</li>`);
+      });
+
+      //클라이언트 이벤트 수신기2 예시
+      socket.on("clientEvent2", function (msg1, msg2) {
+        $("#chatHistory").append(`<li>${msg1}:${msg2}</li>`);
+      });
+    </script>
+  </body>
+</html>

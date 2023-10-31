@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <title>ChatGPT와 채팅하기</title>
+  </head>
+
+  <body>
+    <h1>ChatGPT-3.5터보-소켓서버기반 채팅하기</h1>
+
+    대화명:<input type="text" id="nickName" value="창훈" style="width:500px;" /><br />
+    메시지:<input type="text" id="message" style="width:500px;"/><br />
+    <input type="button" id="btnSend" value="전송" />
+
+    <!-- 채팅이력보기 -->
+    <ul id="chatHistory"></ul>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.0/jquery.min.js"></script>
+
+    <!-- 서버로부터 제공되는 socket.io 클라이언트 통신 라이브러리 파일 참조하기 -->
+    <script src="/socket.io/socket.io.js"></script>
+
+    <script>
+      var socket = io.connect("/");
+      console.log("서버소켓과 연결이 완료되었습니다.");
+
+      $("#btnSend").click(function () {
+        var nickName = $("#nickName").val();
+        var message = $("#message").val();
+        socket.emit("gptchat", message);
+      });
+
+      //서버에서 호출하는 클라이언트 메시지 이벤트 수신기 정의1
+      socket.on("receiveAll", function (msgResult) {
+        console.log("서버에서 receiveAll이벤트가 호출되었습니다.", msgResult);
+        $("#chatHistory").append(`<li>${msgResult}</li>`);
+      });
+
+
+    </script>
+  </body>
+</html>
